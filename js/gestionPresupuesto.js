@@ -1,10 +1,21 @@
 // TODO: Crear las funciones, objetos y variables indicadas en el enunciado
 
 // TODO: Variable global
+var presupuesto = 0;
 
 
-function actualizarPresupuesto() {
+function actualizarPresupuesto(valor) {
     // TODO
+    if (typeof(valor) === 'number' && valor>=0 ){
+        presupuesto = valor;
+        return presupuesto;
+
+    }
+    else {
+        console.log(`El valor ${valor} no es válido`);
+        return -1;
+    }
+
 }
 
 function mostrarPresupuesto() {
