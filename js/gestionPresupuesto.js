@@ -34,6 +34,21 @@ function CrearGasto( descripcion, valor) {
     else{
         this.valor = valor;
     }
+    // Métodos del objeto, estructura this. + función anónima.
+    this.mostrarGasto = function () {
+        return `Gasto correspondiente a ${descripcion} con valor ${valor} €`;  
+    }
+
+    this.actualizarDescripcion = function(descripcion){
+        this.descripcion = descripcion;
+    } 
+
+    this.actualizarValor = function (valor) {
+
+        if(valor>0){
+            this.valor=valor;
+        }
+    }
   
   }
 
