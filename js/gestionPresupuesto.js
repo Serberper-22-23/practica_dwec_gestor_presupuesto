@@ -1,5 +1,6 @@
 // TODO: Crear las funciones, objetos y variables indicadas en el enunciado
-
+let gastos = [];
+let idGasto = 0;
 
 
 // TODO: Variable global
@@ -51,8 +52,9 @@ function CrearGasto( descripcion, valor) {
     }
   
   }
+  //Función sin parámetros que devolverá la variable global gastos.
   function listarGastos () {
-
+    return gastos;
   }
   function anyadirGasto () {
 
@@ -64,7 +66,7 @@ function CrearGasto( descripcion, valor) {
 
   }
   function calcularBalance (){
-    
+
   } 
 
 
