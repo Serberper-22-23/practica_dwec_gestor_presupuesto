@@ -27,7 +27,7 @@ function mostrarPresupuesto() {
 }
 
 
-function CrearGasto( descripcion, valor) {
+function CrearGasto( descripcion, valor, fecha, ...etiquetas) {
     this.descripcion = descripcion;
     if((typeof valor !== 'number' || valor < 0) ){
         this.valor =0;
@@ -43,20 +43,67 @@ function CrearGasto( descripcion, valor) {
     this.actualizarDescripcion = function(descripcion){
         this.descripcion = descripcion;
     } 
+    // traduccion de parámetro fecha a objeto
+    let ms = Date.parse(fecha);
+        // si ms es  no válido ms, será funcion now
+    if (isNaN(ms)){
+        ms = Date.now();
 
+    }
+    //Si no asignamos a la propiedad fecha
+    else {
+        this.fecha = ms;
+    }
+    //Crear y aplicar la función añadir
+    this.etiquetas = [];
+    
+   
+      this.anyadirEtiquetas(...etiquetas);
+
+   
     this.actualizarValor = function (valor) {
 
         if(valor>0){
             this.valor=valor;
         }
     }
+   
   
   }
+// funcion prototipo de añadir etiquetas.
+//  CrearGasto.prototype.
+CrearGasto.prototype.anyadirEtiquetas = function(...etiquetas) {
+  
+    etiquetas.forEach(etiqueta => {
+        let etiquetaExistente = false;
+        for (let i = 0; i < this.etiquetas.length; i++) {
+          if (this.etiquetas[i] === etiqueta) {
+            etiquetaExistente = true;
+            break;
+          }
+        }
+  
+        if (!etiquetaExistente) {
+          this.etiquetas.push(etiqueta);
+        }
+      });
+};
+
+
+
+
   //Función sin parámetros que devolverá la variable global gastos.
   function listarGastos () {
     return gastos;
   }
-  function anyadirGasto () {
+  
+    //Añadir al objeto gasto pasado como parámetro una propiedad id cuyo valor será el valor actual de la variable global idGasto.
+   // Incrementar el valor de la variable global idGasto.
+    //Añadir el objeto gasto pasado como parámetro a la variable global gastos. El gasto se debe añadir al final del array.
+
+  function anyadirGasto (gasto) {
+    gasto.id = idGasto++ ;
+    gastos.push(gasto);
 
   }
   function borrarGasto () {
