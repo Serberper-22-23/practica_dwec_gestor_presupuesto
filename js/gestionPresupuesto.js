@@ -104,15 +104,26 @@ CrearGasto.prototype.anyadirEtiquetas = function(...etiquetas) {
   function anyadirGasto (gasto) {
     gasto.id = idGasto++ ;
     gastos.push(gasto);
+  }
+  //Función de 1 parámetro que eliminará de la variable global gastos el objeto gasto cuyo id haya sido pasado como parámetro. 
+  //Si no existe un gasto con el id proporcionado, no hará nada.Recuerda que JS tiene la igualdad absoluta
+  function borrarGasto (idBorrar) {
+    let pos = gastos.findIndex(gasto => gasto.id == idBorrar);
+    if (pos!=-1){
+    gastos.splice(pos,1);
+    }
 
   }
-  function borrarGasto () {
+  //Función sin parámetros que devuelva la suma de todos los gastos creados en la variable global gastos
+  //Cuando dicen que devuelva es un return
+  //acumulador + gasto , sum 
 
-  }
   function calcularTotalGastos () {
+    return gastos.reduce((sum, gasto) => sum + gasto.valor, 0);
 
   }
   function calcularBalance (){
+    return presupuesto - calcularTotalGastos();
 
   } 
 
