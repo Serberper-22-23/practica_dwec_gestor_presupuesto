@@ -101,22 +101,12 @@ function CrearGasto( descripcion, valor, fecha, ...etiquetas) {
 //  CrearGasto.prototype.
 CrearGasto.prototype.anyadirEtiquetas = function(...etiquetas) {
   
-    etiquetas.forEach(etiqueta => {
-        let etiquetaExistente = false;
-        for (let i = 0; i < this.etiquetas.length; i++) {
-          if (this.etiquetas[i] === etiqueta) {
-            etiquetaExistente = true;
-            break;
-          }
-        }
-  
-        if (!etiquetaExistente) {
+      etiquetas.forEach(etiqueta => {
+      if (!this.etiquetas.includes(etiqueta)) {
           this.etiquetas.push(etiqueta);
-        }
-      });
-
-
-}
+      }
+  });
+};
 
 
 
