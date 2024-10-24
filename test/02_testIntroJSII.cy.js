@@ -74,8 +74,7 @@ Fecha: ${fechalocale}
 Etiquetas:
 - casa
 - supermercado
-- comida
-`);
+- comida`);
     });
 
     it("Método 'actualizarFecha' del objeto gasto", function() {

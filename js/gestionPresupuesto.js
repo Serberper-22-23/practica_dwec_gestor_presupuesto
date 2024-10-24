@@ -47,7 +47,7 @@ function CrearGasto( descripcion, valor, fecha, ...etiquetas) {
     let ms = Date.parse(fecha);
         // si ms es  no válido ms, será funcion now
     if (isNaN(ms)){
-        ms = Date.now();
+        this.fecha = Date.now();
 
     }
     //Si no asignamos a la propiedad fecha
@@ -56,9 +56,7 @@ function CrearGasto( descripcion, valor, fecha, ...etiquetas) {
     }
     //Crear y aplicar la función añadir
     this.etiquetas = [];
-    
-   
-      this.anyadirEtiquetas(...etiquetas);
+    this.anyadirEtiquetas(...etiquetas);
 
    
     this.actualizarValor = function (valor) {
@@ -67,10 +65,39 @@ function CrearGasto( descripcion, valor, fecha, ...etiquetas) {
             this.valor=valor;
         }
     }
+   //new Date es un objeto le pasamos el parámetro, como es un metodo le ponemos this. function
+    this.mostrarGastoCompleto = function () {
+      let fechaTexto = new Date(this.fecha).toLocaleString();
+
+      let etiTex = this.etiquetas.map(etiqueta => `- ${etiqueta}`).join('\n');
+      let texto = `Gasto correspondiente a descripción del gasto con valor ${valor} €.\nFecha: ${fechaTexto}\nEtiquetas:\n${etiTex}`;
+      return texto;
+
+    }
+
+    this.actualizarFecha = function(nwDate) {
+      let parsedDate = Date.parse(nwDate);
+      if (!isNaN(parsedDate)) {
+        this.fecha = parsedDate;
+      }
+    }
    
-  
+    //Función de un número indeterminado de parámetros
+    this.borrarEtiquetas = function(...etiquetas) {
+      let newEti= []; // 
+                            
+      for (let eti of this.etiquetas) { 
+    if (etiquetas.indexOf(eti) == -1) { 
+                                   
+              newEti.push(eti); 
+                                    
+      }
+    }
+      this.etiquetas = newEti; 
   }
-// funcion prototipo de añadir etiquetas.
+  
+}
+// funcion prototipo de añadir etiquetas.2
 //  CrearGasto.prototype.
 CrearGasto.prototype.anyadirEtiquetas = function(...etiquetas) {
   
@@ -87,7 +114,9 @@ CrearGasto.prototype.anyadirEtiquetas = function(...etiquetas) {
           this.etiquetas.push(etiqueta);
         }
       });
-};
+
+
+}
 
 
 
