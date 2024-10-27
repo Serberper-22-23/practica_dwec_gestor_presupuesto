@@ -87,13 +87,33 @@ function CrearGasto( descripcion, valor, fecha, ...etiquetas) {
       let newEti= []; // 
                             
       for (let eti of this.etiquetas) { 
-    if (etiquetas.indexOf(eti) == -1) { 
-                                   
-              newEti.push(eti); 
-                                    
+        if (etiquetas.indexOf(eti) == -1) { 
+                                      
+                  newEti.push(eti); 
+                                        
+        }
       }
-    }
       this.etiquetas = newEti; 
+  }
+  this.obtenerPeriodoAgrupacion = function (periodo){
+    //primero definir el período
+    let periodoAgrupacion="";
+    let nwDate = new Date (this.fecha);
+    let anyo = nwDate.getFullYear();
+    // get month devuelve el mes de 0 a 11
+    let mes =  nwDate.getMonth()+ 1;
+    let dia =  nwDate.getDate();
+
+
+    periodoAgrupacion = periodo === "anyo" ? `${anyo}`:
+                            periodo === "mes" && mes <10?  `${anyo}-0${mes}`:
+                            periodo === "mes" && mes<=12 ? `${anyo}-${mes}`:
+                            periodo === "dia" && dia <10 && mes < 10 ?  `${anyo}-0${mes}-0${dia}`:
+                            periodo === "dia" && dia <10 && mes <= 12 ? `${anyo}-${mes}-0${dia}`:
+                            periodo === "dia" && dia >=10 && mes < 10 ? `${anyo}-0${mes}-${dia}`:
+                            periodo === "dia" && dia >=10 && mes <= 12 ? `${anyo}-${mes}-${dia}`:
+                            "Fecha no válida";
+    return periodoAgrupacion;
   }
   
 }
@@ -101,15 +121,12 @@ function CrearGasto( descripcion, valor, fecha, ...etiquetas) {
 //  CrearGasto.prototype.
 CrearGasto.prototype.anyadirEtiquetas = function(...etiquetas) {
   
-      etiquetas.forEach(etiqueta => {
+    etiquetas.forEach(etiqueta => {
       if (!this.etiquetas.includes(etiqueta)) {
           this.etiquetas.push(etiqueta);
       }
-  });
+    });
 };
-
-
-
 
   //Función sin parámetros que devolverá la variable global gastos.
   function listarGastos () {
@@ -141,16 +158,72 @@ CrearGasto.prototype.anyadirEtiquetas = function(...etiquetas) {
     return gastos.reduce((sum, gasto) => sum + gasto.valor, 0);
 
   }
+
+  
   function calcularBalance (){
     return presupuesto - calcularTotalGastos();
 
   } 
-  function filtrarGastos () {
+  function filtrarGastos (filtros) {
+
+  return gastos.filter((gasto)=>{
+
+    if (filtros.fechaDesde){
+      let fechaDesde = Date.parse(filtros.fechaDesde);
+      //si el gasto es anterior a la fecha mas baja o no hay fecha desde, iremos insertando las condicines para no cumplir
+      if (isNaN(fechaDesde) || gasto.fecha < fechaDesde) {
+        return false;
+      }
+    }
+    if (filtros.fechaHasta){
+      let fechaHasta = Date.parse(filtros.fechaHasta);
+      //si el gasto es anterior a la fecha mas baja o no hay fecha desde
+      if (isNaN(fechaHasta) || gasto.fecha > fechaHasta) {
+        return false;
+      }
+    }
+    if (filtros.valorMinimo && gasto.valor < filtros.valorMinimo){
+      return false;
+    }
+    if (filtros.valorMaximo && gasto.valor > filtros.valorMaximo){
+      return false;
+    }
+
+    if (filtros.descripcionContiene &&
+        !gasto.descripcion.toLowerCase().includes(filtros.descripcionContiene.toLowerCase())){
+      return false;
+    }
+    if (
+      filtros.etiquetasTiene && Array.isArray(filtros.etiquetasTiene) &&
+      filtros.etiquetasTiene.length > 0 && !filtros.etiquetasTiene.some((etiqueta) =>
+        gasto.etiquetas.includes(etiqueta.toLowerCase())
+      )
+    ) {
+      return false;
+    }
+
+    return true;
+
+  });
 
   }
-  function agruparGastos () {
+  function agruparGastos ( periodo = "mes", etiquetas = [], fechaDesde, fechaHasta) {
+    let gastosFiltro = filtrarGastos({
+      fechaDesde: fechaDesde,
+      fechaHasta: fechaHasta,
+      etiquetasTiene: etiquetas
+    });
+    let resultado = gastosFiltro.reduce((acumulador, gasto) => {
+      let idPeriodo = gasto.obtenerPeriodoAgrupacion(periodo);
+      acumulador[idPeriodo] = ((acumulador[idPeriodo] || 0) + gasto.valor);
+      return acumulador;
+    }, {});
+      return resultado;
 
-  }
+    }
+  
+  
+  
 
 // NO MODIFICAR A PARTIR DE AQUÍ: exportación de funciones y objetos creados para poder ejecutar los tests.
 // Las funciones y objetos deben tener los nombres que se indican en el enunciado
