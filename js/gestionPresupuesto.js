@@ -27,45 +27,47 @@ function mostrarPresupuesto() {
 }
 
 
-function CrearGasto( descripcion, valor, fecha, ...etiquetas) {
+class CrearGasto {
+  constructor(descripcion, valor, fecha, ...etiquetas) {
     this.descripcion = descripcion;
-    if((typeof valor !== 'number' || valor < 0) ){
-        this.valor =0;
+    if ((typeof valor !== 'number' || valor < 0)) {
+      this.valor = 0;
     }
-    else{
-        this.valor = valor;
+    else {
+      this.valor = valor;
     }
     // Métodos del objeto, estructura this. + función anónima.
     this.mostrarGasto = function () {
-        return `Gasto correspondiente a ${descripcion} con valor ${valor} €`;  
-    }
+      return `Gasto correspondiente a ${descripcion} con valor ${valor} €`;
+    };
 
-    this.actualizarDescripcion = function(descripcion){
-        this.descripcion = descripcion;
-    } 
+    this.actualizarDescripcion = function (descripcion) {
+      this.descripcion = descripcion;
+    };
     // traduccion de parámetro fecha a objeto
     let ms = Date.parse(fecha);
-        // si ms es  no válido ms, será funcion now
-    if (isNaN(ms)){
-        this.fecha = Date.now();
+    // si ms es  no válido ms, será funcion now
+    if (isNaN(ms)) {
+      this.fecha = Date.now();
 
     }
+
     //Si no asignamos a la propiedad fecha
     else {
-        this.fecha = ms;
+      this.fecha = ms;
     }
     //Crear y aplicar la función añadir
     this.etiquetas = [];
     this.anyadirEtiquetas(...etiquetas);
 
-   
+
     this.actualizarValor = function (valor) {
 
-        if(valor>0){
-            this.valor=valor;
-        }
-    }
-   //new Date es un objeto le pasamos el parámetro, como es un metodo le ponemos this. function
+      if (valor > 0) {
+        this.valor = valor;
+      }
+    };
+    //new Date es un objeto le pasamos el parámetro, como es un metodo le ponemos this. function
     this.mostrarGastoCompleto = function () {
       let fechaTexto = new Date(this.fecha).toLocaleString();
 
@@ -73,60 +75,59 @@ function CrearGasto( descripcion, valor, fecha, ...etiquetas) {
       let texto = `Gasto correspondiente a descripción del gasto con valor ${valor} €.\nFecha: ${fechaTexto}\nEtiquetas:\n${etiTex}`;
       return texto;
 
-    }
+    };
 
-    this.actualizarFecha = function(nwDate) {
+    this.actualizarFecha = function (nwDate) {
       let parsedDate = Date.parse(nwDate);
       if (!isNaN(parsedDate)) {
         this.fecha = parsedDate;
       }
-    }
-   
+    };
+
     //Función de un número indeterminado de parámetros
-    this.borrarEtiquetas = function(...etiquetas) {
-      let newEti= []; // 
-                            
-      for (let eti of this.etiquetas) { 
-        if (etiquetas.indexOf(eti) == -1) { 
-                                      
-                  newEti.push(eti); 
-                                        
+    this.borrarEtiquetas = function (...etiquetas) {
+      let newEti = []; // 
+
+      for (let eti of this.etiquetas) {
+        if (etiquetas.indexOf(eti) == -1) {
+
+          newEti.push(eti);
+
         }
       }
-      this.etiquetas = newEti; 
-  }
-  this.obtenerPeriodoAgrupacion = function (periodo){
-    //primero definir el período
-    let periodoAgrupacion="";
-    let nwDate = new Date (this.fecha);
-    let anyo = nwDate.getFullYear();
-    // get month devuelve el mes de 0 a 11
-    let mes =  nwDate.getMonth()+ 1;
-    let dia =  nwDate.getDate();
+      this.etiquetas = newEti;
+    };
+    this.obtenerPeriodoAgrupacion = function (periodo) {
+      //primero definir el período
+      let nwDate = new Date(this.fecha);
+      let anyo = nwDate.getFullYear();
+      // get month devuelve el mes de 0 a 11
+      let mes = nwDate.getMonth() + 1;
+      let dia = nwDate.getDate();
 
 
-    periodoAgrupacion = periodo === "anyo" ? `${anyo}`:
-                            periodo === "mes" && mes <10?  `${anyo}-0${mes}`:
-                            periodo === "mes" && mes<=12 ? `${anyo}-${mes}`:
-                            periodo === "dia" && dia <10 && mes < 10 ?  `${anyo}-0${mes}-0${dia}`:
-                            periodo === "dia" && dia <10 && mes <= 12 ? `${anyo}-${mes}-0${dia}`:
-                            periodo === "dia" && dia >=10 && mes < 10 ? `${anyo}-0${mes}-${dia}`:
-                            periodo === "dia" && dia >=10 && mes <= 12 ? `${anyo}-${mes}-${dia}`:
-                            "Fecha no válida";
-    return periodoAgrupacion;
+      return periodo === "anyo" ? `${anyo}` :
+        periodo === "mes" && mes < 10 ? `${anyo}-0${mes}` :
+          periodo === "mes" && mes <= 12 ? `${anyo}-${mes}` :
+            periodo === "dia" && dia < 10 && mes < 10 ? `${anyo}-0${mes}-0${dia}` :
+              periodo === "dia" && dia < 10 && mes <= 12 ? `${anyo}-${mes}-0${dia}` :
+                periodo === "dia" && dia >= 10 && mes < 10 ? `${anyo}-0${mes}-${dia}` :
+                  periodo === "dia" && dia >= 10 && mes <= 12 ? `${anyo}-${mes}-${dia}` :
+                    "Fecha no válida";
+    };
+
   }
-  
-}
-// funcion prototipo de añadir etiquetas.2
-//  CrearGasto.prototype.
-CrearGasto.prototype.anyadirEtiquetas = function(...etiquetas) {
-  
+  // funcion prototipo de añadir etiquetas.2
+  //  CrearGasto.prototype.
+  anyadirEtiquetas(...etiquetas) {
+
     etiquetas.forEach(etiqueta => {
       if (!this.etiquetas.includes(etiqueta)) {
-          this.etiquetas.push(etiqueta);
+        this.etiquetas.push(etiqueta);
       }
     });
-};
+  }
+}
 
   //Función sin parámetros que devolverá la variable global gastos.
   function listarGastos () {
