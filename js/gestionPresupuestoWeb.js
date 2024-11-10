@@ -93,6 +93,11 @@ function repintar () {
     for (let gasto of listaGastos){
     mostrarGastoWeb("listado-gastos-completo", gasto);
 }
+function actualizarPresupuestoWeb () {
+let nuevoPresupuesto = prompt("Introduce el nuevo presupuesto:");
+
+
+}
 
 
     
