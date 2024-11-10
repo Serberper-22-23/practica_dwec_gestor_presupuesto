@@ -77,6 +77,15 @@ function mostrarGastosAgrupadosWeb(idElemento, agrup, periodo){
     elemento.appendChild(nwAgrup);
 }
 
+function repintar () {
+    gestionPresupuesto.mostrarPresupuesto();
+    mostrarDatoEnId ("presupuesto",gestionPresupuesto.mostrarPresupuesto());
+    mostrarDatoEnId ("gastos-totales", gestionPresupuesto.calcularTotalGastos());
+    
+
+
+}
+
 export{
 mostrarDatoEnId,
 mostrarGastoWeb,
