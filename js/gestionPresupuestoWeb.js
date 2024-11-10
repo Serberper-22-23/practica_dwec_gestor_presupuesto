@@ -79,8 +79,22 @@ function mostrarGastosAgrupadosWeb(idElemento, agrup, periodo){
 
 function repintar () {
     gestionPresupuesto.mostrarPresupuesto();
+    //Mostrar el presupuesto en div#presupuesto (funciones mostrarPresupuesto y mostrarDatoEnId)
     mostrarDatoEnId ("presupuesto",gestionPresupuesto.mostrarPresupuesto());
+    //Mostrar los gastos totales en div#gastos-totales (funciones calcularTotalGastos y mostrarDatoEnId)
     mostrarDatoEnId ("gastos-totales", gestionPresupuesto.calcularTotalGastos());
+    //Mostrar el balance total en div#balance-total (funciones calcularBalance y mostrarDatoEnId)
+    mostrarDatoEnId ("balance-total", gestionPresupuesto.calcularBalance());
+    //Borrar el contenido de div#listado-gastos-completo, para que el paso siguiente no duplique la información. Puedes utilizar innerHTML para borrar el contenido de dicha capa.
+    getElementById("listado-gastos-completo").innerHTML = '';
+    //Mostrar el listado completo de gastos en div#listado-gastos-completo (funciones listarGastos y mostrarGastoWeb)
+    let listaGastos = gestionPresupuesto.listarGastos();
+
+    for (let gasto of listaGastos){
+    mostrarGastoWeb("listado-gastos-completo", gasto);
+}
+
+
     
 
 
