@@ -92,18 +92,42 @@ function repintar () {
 
     for (let gasto of listaGastos){
     mostrarGastoWeb("listado-gastos-completo", gasto);
+    }
 }
 function actualizarPresupuestoWeb () {
-let nuevoPresupuesto = prompt("Introduce el nuevo presupuesto:");
+    //pedir el nuevo presupuesto
+let nuevoPresupuestoStr = prompt("Introduce el nuevo presupuesto:");
+let nuevoPresuesto = parseFloat(nuevoPresupuestoStr);
+gestionPresupuesto.actualizarPresupuesto(nuevoPresupuestoStr);
+repintar();
+}
 
+let btnActualPresupuesto = document.getElementById("actualizarpresupuesto");
+btnActualPresupuesto.addEventListener("click", actualizarPresupuestoWeb);
+
+function nuevoGastoWeb () {
+let nwDescripcion = prompt('Introduce el valor de gasto');
+let valGasto = parseFloat(prompt("Introduce el valor del gasto"));
+let nwFecha = prompt("Introduce la fecha del gasto en formato yyyy-mm-dd");
+let nombresEtiqueta = prompt("Introduce las etiquetas separadas por ,");
+let arrayEtiquetas = nombresEtiqueta.split(',');
+
+let nwGasto = gestionPresupuesto.CrearGasto (nwDescripcion, valGasto, nwFecha, arrayEtiquetas);
+
+gestionPresupuesto.anyadirGasto(nwGasto);
+repintar();
 
 }
+let btnAnyadirGasto = document.getElementById("anyadirgasto");
+btnAnyadirGasto.addEventListener("click", nuevoGastoWeb);
+
+
 
 
     
 
 
-}
+
 
 export{
 mostrarDatoEnId,
