@@ -41,13 +41,40 @@ if (container){
         let spanEtiquetas = document.createElement("span");
         spanEtiquetas.classList.add("gasto-etiquetas-etiqueta");
         spanEtiquetas.textContent = etiqueta ;
+        spanEtiquetas.style.display = "block";
         etiquetasDiv.appendChild(spanEtiquetas);
+        let handlerBorraEtiquetas = new BorrarEtiquetasHandle();
+        handlerBorraEtiquetas.gasto = gasto;
+        handlerBorraEtiquetas.etiqueta = etiqueta;
+        spanEtiquetas.addEventListener('click', handlerBorraEtiquetas);
+       
+        
+
     }
     nuevoGastoDiv.appendChild(descripDiv);
     nuevoGastoDiv.appendChild(fechaDiv);
     nuevoGastoDiv.appendChild(valorDiv);
     nuevoGastoDiv.appendChild(etiquetasDiv);
     container.appendChild(nuevoGastoDiv);
+
+    let botonEditar = document.createElement("button");
+    //hay que definir el botón para que no sea submit.
+    botonEditar.type = "button";
+    botonEditar.className = "gasto-editar";
+    botonEditar.textContent = "Editar";
+    //Crear un nuevo objeto a partir de la función constructora EditarHandle.
+    let handlerEditar = new editarHandle(gasto);
+    botonEditar.addEventListener('click', handlerEditar);
+    nuevoGastoDiv.appendChild(botonEditar);
+
+    let botonBorrar = document.createElement("button");
+    botonBorrar.type = "button";
+    botonBorrar.className = "gasto-borrar";
+    botonBorrar.textContent = "Borrar";
+    let handlerBorrar = new BorrarHandle (gasto);
+    botonBorrar.addEventListener('click', handlerBorrar);
+    nuevoGastoDiv.appendChild(botonBorrar);
+
 } else {
     console.error('El contenedor con el id ' + idElemento + ' no fue encontrado.');
 }
@@ -86,7 +113,7 @@ function repintar () {
     //Mostrar el balance total en div#balance-total (funciones calcularBalance y mostrarDatoEnId)
     mostrarDatoEnId ("balance-total", gestionPresupuesto.calcularBalance());
     //Borrar el contenido de div#listado-gastos-completo, para que el paso siguiente no duplique la información. Puedes utilizar innerHTML para borrar el contenido de dicha capa.
-    getElementById("listado-gastos-completo").innerHTML = '';
+    document.getElementById("listado-gastos-completo").innerHTML = '';
     //Mostrar el listado completo de gastos en div#listado-gastos-completo (funciones listarGastos y mostrarGastoWeb)
     let listaGastos = gestionPresupuesto.listarGastos();
 
@@ -95,10 +122,10 @@ function repintar () {
     }
 }
 function actualizarPresupuestoWeb () {
-    //pedir el nuevo presupuesto
+    //pedir el nuevo presupuesto, hay que pasarlo a valor
 let nuevoPresupuestoStr = prompt("Introduce el nuevo presupuesto:");
-let nuevoPresuesto = parseFloat(nuevoPresupuestoStr);
-gestionPresupuesto.actualizarPresupuesto(nuevoPresupuestoStr);
+let nuevoPresupuesto = parseFloat(nuevoPresupuestoStr);
+gestionPresupuesto.actualizarPresupuesto(nuevoPresupuesto);
 repintar();
 }
 
@@ -106,13 +133,13 @@ let btnActualPresupuesto = document.getElementById("actualizarpresupuesto");
 btnActualPresupuesto.addEventListener("click", actualizarPresupuestoWeb);
 
 function nuevoGastoWeb () {
-let nwDescripcion = prompt('Introduce el valor de gasto');
+let nwDescripcion = prompt('Introduce la descripción del gasto');
 let valGasto = parseFloat(prompt("Introduce el valor del gasto"));
 let nwFecha = prompt("Introduce la fecha del gasto en formato yyyy-mm-dd");
 let nombresEtiqueta = prompt("Introduce las etiquetas separadas por ,");
 let arrayEtiquetas = nombresEtiqueta.split(',');
 
-let nwGasto = gestionPresupuesto.CrearGasto (nwDescripcion, valGasto, nwFecha, arrayEtiquetas);
+let nwGasto = new gestionPresupuesto.CrearGasto (nwDescripcion, valGasto, nwFecha, arrayEtiquetas);
 
 gestionPresupuesto.anyadirGasto(nwGasto);
 repintar();
@@ -144,11 +171,12 @@ function BorrarHandle (gasto){
         repintar();
     }
 }
-function BorrarEtiquetasHandle (gasto) {
-    this.gasto;
-    this.etiqueta;
+function BorrarEtiquetasHandle (gasto, etiqueta) {
+
+   
     this.handleEvent = function () {
         this.gasto.borrarEtiquetas(this.etiqueta);
+        repintar();
     }
 }
 
