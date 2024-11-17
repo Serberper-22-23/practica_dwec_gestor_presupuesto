@@ -74,6 +74,8 @@ if (container){
     let handlerBorrar = new BorrarHandle (gasto);
     botonBorrar.addEventListener('click', handlerBorrar);
     nuevoGastoDiv.appendChild(botonBorrar);
+    
+    
 
 } else {
     console.error('El contenedor con el id ' + idElemento + ' no fue encontrado.');
@@ -179,8 +181,66 @@ function BorrarEtiquetasHandle () {
     }
 }
 
+function nuevoGastoWebFormulario() {
+    // Crear una copia del formulario
+    let plantillaFormulario = document.getElementById("formulario-template").content.cloneNode(true);
+    // Acceder al elemento <form> dentro de ese fragmento de documento
+    let formulario = plantillaFormulario.querySelector("form");
+/*
+Por último, añadir el fragmento de documento (variable plantillaFormulario) al final del <div id="controlesprincipales"> para que se muestre en la página.
+*/
+    let controlesPrincipales = document.getElementById("controlesprincipales");
+    controlesPrincipales.append(plantillaFormulario);
 
-    
+    // Crear un manejador de evento para el evento submit del formulario
+    formulario.addEventListener("submit", function (event) {
+        // Prevenir el envío del formulario
+        event.preventDefault();
+
+        // Crear un nuevo gasto con la información del formulario
+        let newDescripcion = event.currentTarget.querySelector("#descripcion").value;
+        let nuevoValor = parseFloat(event.currentTarget.querySelector("#valor").value);
+        let newFecha = event.currentTarget.querySelector("#fecha").value;    
+        let arrayEtiquetas = event.currentTarget.querySelector("#etiquetas").value.split(",");
+        // Añadir el gasto a la lista de gastos
+        let nuevoGasto = new gestionPresupuesto.CrearGasto (newDescripcion, nuevoValor, newFecha, arrayEtiquetas)
+        gestionPresupuesto.anyadirGasto(nuevoGasto);
+
+        // Llamar a la función repintar
+        repintar();
+
+
+        // Activar el botón anyadirgasto-formulario
+        document.getElementById("anyadirgasto-formulario").removeAttribute("disabled");
+        // Obtener el botón
+
+
+        // Cerrar el formulario (puedes ocultarlo o eliminarlo del DOM según tu preferencia)
+       // formulario.parentElement.removeChild(formulario);
+
+    });
+
+    // Agregar el formulario a la página
+    document.body.appendChild(plantillaFormulario);
+
+
+    // Desactivar el botón anyadirgasto-formulario
+    document.getElementById("anyadirgasto-formulario").setAttribute("disabled", "true");
+    //localizar button cancelar
+    let botonCancelarGasto = formulario.querySelector(".cancelar") ;
+
+         // Para que al pulsar se elimine el formulario.
+        let eventoCancelar = new cancelarNuevoGasto();
+
+        botonCancelarGasto.addEventListener("click",eventoCancelar);
+        document.body.appendChild(plantillaFormulario);  
+
+       
+             
+        
+}
+
+document.getElementById("anyadirgasto-formulario").addEventListener("click", nuevoGastoWebFormulario);
 
 
 
