@@ -67,6 +67,8 @@ if (container){
     botonEditar.addEventListener('click', handlerEditar);
     nuevoGastoDiv.appendChild(botonEditar);
 
+  
+
     let botonBorrar = document.createElement("button");
     botonBorrar.type = "button";
     botonBorrar.className = "gasto-borrar";
@@ -74,6 +76,13 @@ if (container){
     let handlerBorrar = new BorrarHandle (gasto);
     botonBorrar.addEventListener('click', handlerBorrar);
     nuevoGastoDiv.appendChild(botonBorrar);
+
+    let botonEditarForm = document.createElement("button");
+    //hay que definir el botón para que no sea submit.
+    botonEditarForm.type = "button";
+    botonEditarForm.className = "gasto-editar-formulario";
+    botonEditarForm.textContent = "Editar (formulario)";
+    nuevoGastoDiv.appendChild(botonEditarForm);
     
     
 
@@ -216,7 +225,7 @@ Por último, añadir el fragmento de documento (variable plantillaFormulario) al
 
 
         // Cerrar el formulario (puedes ocultarlo o eliminarlo del DOM según tu preferencia)
-       // formulario.parentElement.removeChild(formulario);
+       formulario.parentElement.removeChild(formulario);
 
     });
 
