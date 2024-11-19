@@ -82,6 +82,9 @@ if (container){
     botonEditarForm.type = "button";
     botonEditarForm.className = "gasto-editar-formulario";
     botonEditarForm.textContent = "Editar (formulario)";
+    let eventEditForm = new EditarHandleFormulario(gasto);
+    botonEditarForm.addEventListener('click', eventEditForm);
+
     nuevoGastoDiv.appendChild(botonEditarForm);
     
     
@@ -250,6 +253,79 @@ Por último, añadir el fragmento de documento (variable plantillaFormulario) al
 }
 
 document.getElementById("anyadirgasto-formulario").addEventListener("click", nuevoGastoWebFormulario);
+
+function cancelarNuevoGasto(event) {
+    this.handleEvent = function(e){ 
+        document.getElementById("anyadirgasto-formulario").disabled = false;
+        e.currentTarget.parentNode.remove(); 
+        repintar(); 
+    }
+  
+}
+
+function submitEditarHandleForm(){
+    this.handleEvent = function( event ){
+
+      event.preventDefault();
+
+      let form = event.currentTarget;
+
+      let newDescripcion = form.elements.descripcion.value;
+      let valorStr = parseFloat(form.elements.valor.value);
+      let newFecha =  form.elements.fecha.value;
+      //alert('Introduce las etiquetas separadas por ,');
+      let etiquetasNew = form.elements.etiquetas.value;
+
+      this.gasto.actualizarDescripcion(newDescripcion);
+      this.gasto.actualizarValor(valorStr);
+      this.gasto.actualizarFecha(newFecha);
+      this.gasto.borrarEtiquetas();
+      this.gasto.anyadirEtiquetas(etiquetasNew);
+
+      repintar();
+      document.getElementById("anyadirgasto-formulario").disabled = false;
+    }
+  }
+
+function EditarHandleFormulario(gasto){
+    this.gasto=gasto;
+    this.handleEvent = function (event) {
+        event.preventDefault();
+    // Crear una copia del formulario
+    let plantillaFormulario = document.getElementById("formulario-template").content.cloneNode(true);
+
+    // Acceder al elemento <form> dentro de ese fragmento de documento
+    let formulario = plantillaFormulario.querySelector("form");
+        event.target.parentElement.append(plantillaFormulario);
+        event.currentTarget.after(formulario);
+        let botonEditForm = event.currentTarget;
+        botonEditForm.disabled = true;
+
+    /*información de los campos*/
+       formulario.elements.descripcion.value = this.gasto.descripcion;
+        formulario.elements.valor.value = this.gasto.valor;
+        //alert("'Introduce la fecha del gasto en formato: yyyy-mm-dd' ");
+        formulario.elements.fecha.value = new Date(this.gasto.fecha).toLocaleDateString();
+    
+        formulario.elements.etiquetas.value = this.gasto.etiquetas;
+        //objeto manejador de eventos.
+        let submitFormulario = new submitEditarHandleForm();
+        submitFormulario.gasto = this.gasto;
+        formulario.addEventListener('submit',submitFormulario);
+
+        
+        // Localizar el botón cancelar
+        let botonCancelarGasto = formulario.querySelector(".cancelar");
+         // Para que al pulsar se elimine el formulario.
+        let eventoCancelar = new cancelarNuevoGasto();
+        botonCancelarGasto.addEventListener("click",eventoCancelar);
+        // Evento click  del boton .gasto-enviar-api
+    
+
+    }
+
+}
+
 
 
 
