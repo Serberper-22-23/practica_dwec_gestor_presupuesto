@@ -216,7 +216,15 @@ function mostrarPresupuesto() {
 
     }
   
-  
+  function transformarListadoEtiquetas(textoEtiquetas){
+    // Regex de lo que buscamos
+    let regex= /[^,.:;\s] +/gi;
+    //Capturamos el string
+    let etiquetas = str.match(regex);
+    // cadena encontrada
+    return etiquetas;
+
+  }
   
 
 // NO MODIFICAR A PARTIR DE AQUÍ: exportación de funciones y objetos creados para poder ejecutar los tests.
@@ -232,6 +240,7 @@ export   {
      calcularTotalGastos,
      calcularBalance,
      filtrarGastos,
-     agruparGastos
+     agruparGastos,
+     transformarListadoEtiquetas
 
 }
