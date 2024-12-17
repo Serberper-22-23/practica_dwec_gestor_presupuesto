@@ -41,7 +41,7 @@ if (container){
         let spanEtiquetas = document.createElement("span");
         spanEtiquetas.classList.add("gasto-etiquetas-etiqueta");
         spanEtiquetas.textContent = etiqueta ;
-        spanEtiquetas.style.display = "block";
+        spanEtiquetas.style.display = "inline";
         etiquetasDiv.appendChild(spanEtiquetas);
         let handlerBorraEtiquetas = new BorrarEtiquetasHandle();
         handlerBorraEtiquetas.gasto = gasto;
@@ -326,11 +326,50 @@ function EditarHandleFormulario(gasto){
 
 }
 
+let botonFiltradoFormulGasto = new filtrarGastosWeb();
+document.getElementById("formulario-filtrado").addEventListener("submit", botonFiltradoFormulGasto);
+
+function filtrarGastosWeb (){
+    this.handleEvent = function (e){
+        e.preventDefault();
+        let filtroFormulario = e.currentTarget;
+
+        //Datos formulario
+        let descripcionContiene = filtroFormulario.elements['formulario-filtrado-descripcion'].value;
+        let valorMinimo = filtroFormulario.elements['formulario-filtrado-valor-minimo'].value;
+        let valorMaximo = filtroFormulario.elements['formulario-filtrado-valor-maximo'].value;
+        let fechaDesde = filtroFormulario.elements['formulario-filtrado-fecha-desde'].value;
+        let fechaHasta = filtroFormulario.elements['formulario-filtrado-fecha-hasta'].value;
+        let etiquetasTiene = filtroFormulario.elements['formulario-filtrado-etiquetas-tiene'].value;
+        
+        valorMaximo = parseFloat(valorMaximo);
+        valorMinimo= parseFloat(valorMinimo);
+        let etiquetasValidas = [];
+        if(etiquetasTiene.trim() !== null){
+            etiquetasValidas = gestionPresupuesto.transformarListadoEtiquetas(etiquetasTiene);
+    }
+
+    let filtroGastos = gestionPresupuesto.filtrarGastos( {
+        fechaDesde,
+        fechaHasta,
+        valorMinimo,
+        valorMaximo,
+        descripcionContiene,
+        etiquetasTiene : etiquetasValidas
+
+    })
+    let listaFiltro = document.getElementById('listado-gastos-completo');
+    listaFiltro.innerHTML="";
+    for (let gasto of filtroGastos){
+        mostrarGastoWeb('listado-gastos-completo',gasto);
+    }
+    }
+}
 
 
 
 
-export{
+export {
 mostrarDatoEnId,
 mostrarGastoWeb,
 mostrarGastosAgrupadosWeb

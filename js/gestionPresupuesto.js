@@ -183,8 +183,10 @@ function mostrarPresupuesto() {
       return false;
     }
 
-    if (filtros.descripcionContiene &&
-        !gasto.descripcion.toLowerCase().includes(filtros.descripcionContiene.toLowerCase())){
+    if (
+      filtros.descripcionContiene &&
+      !gasto.descripcion.toLowerCase().includes(filtros.descripcionContiene.toLowerCase())
+      ){
       return false;
     }
     if (
@@ -218,9 +220,9 @@ function mostrarPresupuesto() {
   
   function transformarListadoEtiquetas(textoEtiquetas){
     // Regex de lo que buscamos
-    let regex= /[^,.:;\s] +/gi;
+    let regex= /[^,.:;\s]+/gi;
     //Capturamos el string
-    let etiquetas = str.match(regex);
+    let etiquetas = textoEtiquetas.match(regex);
     // cadena encontrada
     return etiquetas;
 
