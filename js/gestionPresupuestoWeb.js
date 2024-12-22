@@ -366,6 +366,36 @@ function filtrarGastosWeb (){
     }
 }
 
+function guardarGastosWeb () {
+    this.handleEvent = function(){
+        // la clave y el valor nos lo dicen en el enunciado
+        localStorage.setItem('GestorGastosDWEC',JSON.stringify(gestionPresupuesto.listarGastos()));
+    }
+}
+let botonSaveGastoWeb = new guardarGastosWeb();
+document.getElementById("guardar-gastos").addEventListener("click",botonSaveGastoWeb);
+
+
+
+function cargarGastosWeb (){
+    this.handleEvent = function(){
+        let cargaGastosWeb = JSON.parse(localStorage.getItem('GestorGastosDWEC'));
+        if(!cargaGastosWeb){
+            gestionPresupuesto.cargarGastos([]);
+        }
+            // Convertir el JSON de gastos a un array de JavaScript
+        else {
+        gestionPresupuesto.cargarGastos(cargaGastosWeb);
+        }
+        repintar();
+    }
+  
+}
+let botonCargaGastoWeb = new cargarGastosWeb();
+document.getElementById("cargar-gastos").addEventListener("click",botonCargaGastoWeb);
+
+
+
 
 
 
