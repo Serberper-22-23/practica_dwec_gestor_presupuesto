@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="utf-8" />
@@ -93,6 +93,12 @@
       <button type="button" id="cargar-gastos">
             Cargar gastos
         </button>
+         <!--Vamos a añadir dos controles a la capa <div id="controlesprincipales"-->
+          <button type="button" id="cargar-gastos-api">
+            Cargar gastos (API)
+          </button>
+          <input id="nombre_usuario" name="nombre_usuario" type="text">
+
 
     </div>
     <template id="formulario-template">
@@ -115,6 +121,7 @@
           </div>
           <button type="submit">Enviar</button>
           <button class="cancelar" type="button">Cancelar</button>
+          <button type="button" class="gasto-enviar-api">Enviar (API)</button>
       </form>
   </template>
   
