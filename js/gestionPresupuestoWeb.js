@@ -85,8 +85,19 @@ if (container){
     let eventEditForm = new EditarHandleFormulario(gasto);
     botonEditarForm.addEventListener('click', eventEditForm);
 
+          // botón Borrar API
+    let botonBorrarAPI = document.createElement('button');
+    botonBorrarAPI.type = 'button';
+    botonBorrarAPI.className = 'gasto-borrar-api';
+    botonBorrarAPI.textContent = 'Borrar (API)';
+    let manejadorApiDelete = new borrarGastoApi;
+    manejadorApiDelete.gasto = gasto;
+    botonBorrarAPI.addEventListener('click',manejadorApiDelete);
+    nuevoGastoDiv.appendChild(botonBorrarAPI);
+
     nuevoGastoDiv.appendChild(botonEditarForm);
     
+
     
 
 } else {
@@ -394,6 +405,53 @@ function cargarGastosWeb (){
 let botonCargaGastoWeb = new cargarGastosWeb();
 document.getElementById("cargar-gastos").addEventListener("click",botonCargaGastoWeb);
 
+async function cargarGastosApi() {
+    let usuario = document.getElementById("nombre_usuario").value;
+    console.log("El usuario es: " + usuario);
+    let urlApi = `https://suhhtqjccd.execute-api.eu-west-1.amazonaws.com/latest/${usuario}`;
+
+
+    try {
+        let response = await fetch(urlApi);
+        let data = await response.json();
+    
+        // Actualizar el array de gastos y repintar la página
+        gestionPresupuesto.cargarGastos(data);
+        repintar();
+
+      } catch (error) {
+        console.error('Error al cargar gastos desde la API:', error);
+      }
+
+} 
+let btnCargarGastosAPI = document.getElementById("cargar-gastos-api"); 
+btnCargarGastosAPI.addEventListener("click", cargarGastosApi); 
+
+function borrarGastoApi() {
+   
+
+    this.handleEvent = async function (event) {
+        event.preventDefault();
+        let nomUsuario = document.getElementById('nombre_usuario').value;
+        let gastoId = this.gasto.gastoId;
+        console.log("este gasto es "+ gastoId);
+        let url = new URL("https://suhhtqjccd.execute-api.eu-west-1.amazonaws.com/latest/" + nomUsuario + "/" + gastoId);
+    
+        let answer =    await fetch(url);
+        if (answer.ok){
+
+            let respuesta = await fetch (url, { method: "DELETE"});
+       
+            if (respuesta.ok) {
+                console.log("Gasto borrado");
+            }
+            else {
+                console.log ("No se ha podido borrar el gasto");
+            }
+        }
+        cargarGastosApi();
+}
+}
 
 
 
