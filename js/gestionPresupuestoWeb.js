@@ -256,10 +256,11 @@ Por último, añadir el fragmento de documento (variable plantillaFormulario) al
         let eventoCancelar = new cancelarNuevoGasto();
 
         botonCancelarGasto.addEventListener("click",eventoCancelar);
-        document.body.appendChild(plantillaFormulario);  
 
-       
-             
+        let botonEnviarApi = formulario.querySelector('.gasto-enviar-api'); 
+        botonEnviarApi.addEventListener('click', enviarGastoApi); 
+        document.body.appendChild(plantillaFormulario);  
+     
         
 }
 
@@ -323,6 +324,7 @@ function EditarHandleFormulario(gasto){
         let submitFormulario = new submitEditarHandleForm();
         submitFormulario.gasto = this.gasto;
         formulario.addEventListener('submit',submitFormulario);
+     
 
         
         // Localizar el botón cancelar
@@ -331,6 +333,12 @@ function EditarHandleFormulario(gasto){
         let eventoCancelar = new cancelarNuevoGasto();
         botonCancelarGasto.addEventListener("click",eventoCancelar);
         // Evento click  del boton .gasto-enviar-api
+                // Evento click  del boton .gasto-enviar-api
+        let botonEditarAPi = formulario.querySelector('.gasto-enviar-api');
+        let manejadorEditarAPI = new actualizarGastoApi(); 
+        manejadorEditarAPI.gasto = this.gasto;
+        manejadorEditarAPI.botonEditar = event.target; 
+        botonEditarAPi.addEventListener('click', manejadorEditarAPI);
     
 
     }
@@ -427,6 +435,47 @@ async function cargarGastosApi() {
 let btnCargarGastosAPI = document.getElementById("cargar-gastos-api"); 
 btnCargarGastosAPI.addEventListener("click", cargarGastosApi); 
 
+
+async function enviarGastoApi(event) {
+    event.preventDefault();
+    let nombreUsuario = document.getElementById('nombre_usuario').value;
+    let formulario = event.target.form; 
+    let descripcion = formulario.elements.descripcion.value; 
+    let valor =  formulario.elements.valor.value; 
+    let valorNum = parseFloat(valor); 
+    let fecha = formulario.elements.fecha.value; 
+    console.log(fecha);
+    let etiquetas = formulario.elements.etiquetas.value; 
+    let etiquetasArr = etiquetas.split(', ').map(etiqueta => etiqueta.trim()); 
+    let nuevoGastoAPI = new gestionPresupuesto.CrearGasto(descripcion, valorNum, fecha); 
+    nuevoGastoAPI.anyadirEtiquetas(...etiquetasArr); 
+    gestionPresupuesto.anyadirGasto(nuevoGastoAPI);
+    try {
+      await fetch(`https://suhhtqjccd.execute-api.eu-west-1.amazonaws.com/latest/${nombreUsuario}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          descripcion: nuevoGastoAPI.descripcion,
+          valor: nuevoGastoAPI.valor,
+          fecha: formatearFecha(fecha)
+          ,
+          etiquetas: nuevoGastoAPI.etiquetas,
+        }),
+      });
+      // Actualizar la lista de gastos desde la API
+      cargarGastosApi();
+    } catch (error) {
+      console.error('Error al enviar el gasto a la API:', error);
+    }
+    formulario.remove(); 
+    let botonAnyadir = document.getElementById('anyadirgasto-formulario'); 
+    botonAnyadir.disabled = false; 
+  
+  }
+  
+
 function borrarGastoApi() {
    
 
@@ -434,7 +483,7 @@ function borrarGastoApi() {
         event.preventDefault();
         let nomUsuario = document.getElementById('nombre_usuario').value;
         let gastoId = this.gasto.gastoId;
-        console.log("este gasto es "+ gastoId);
+       // console.log("este gasto es "+ gastoId);
         let url = new URL("https://suhhtqjccd.execute-api.eu-west-1.amazonaws.com/latest/" + nomUsuario + "/" + gastoId);
     
         let answer =    await fetch(url);
@@ -452,6 +501,72 @@ function borrarGastoApi() {
         cargarGastosApi();
 }
 }
+
+function formatearFecha(fecha) {
+    const d = new Date(fecha);
+    const dd = d.getDate().toString().padStart(2, '0');
+    const mm = (d.getMonth() + 1).toString().padStart(2, '0');
+    const yyyy = d.getFullYear();
+  
+    return `${dd}/${mm}/${yyyy}`;
+  }
+
+
+function actualizarGastoApi(){
+ 
+    this.handleEvent = async function (event){
+        // Obtener el nombre de usuario desde el input
+        let nomUsuario = document.getElementById('nombre_usuario').value;
+        // para acceder a los campos del formulario
+        let formulario = event.currentTarget.form;
+        // Obtener el ID del gasto actual (reemplaza 'obtenerIdGasto' con la lógica real para obtener el ID)
+        
+ 
+        // Obtener los datos del formulario
+        let descripcion = formulario.elements.descripcion.value;
+        let valor = parseFloat(formulario.elements.valor.value);
+        let fecha = formatearFecha(formulario.elements.fecha.value);
+        console.log(fecha);
+        let etiquetas = formulario.elements.etiquetas.value.split(',');
+        let idGasto = this.gasto.gastoId;
+               // Crear la URL de la API con el nombre de usuario y el ID del gasto
+        let apiUrl = `https://suhhtqjccd.execute-api.eu-west-1.amazonaws.com/latest/${nomUsuario}/${idGasto}`;
+        console.log(apiUrl);
+
+        // Crear el objeto con los datos del formulario de edición
+        const datosActualizar = {
+          descripcion: descripcion,
+          valor: valor,
+          fecha: fecha,
+          etiquetas: etiquetas
+        };
+        // Realizar la solicitud fetch PUT a la API
+        fetch(apiUrl, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(datosActualizar)
+        })
+          .then(respuesta => {
+            // Verificar si la solicitud fue exitosa (código de estado 200)
+            // Verificar si la solicitud fue exitosa
+            if (!respuesta.ok) {
+              throw new Error(`Error en la solicitud: ${respuesta.status}`);
+            }
+            // Parsear la respuesta JSON
+            return respuesta.json();
+          })
+          .then(result => {
+            cargarGastosApi();
+          })
+          .catch(error => {
+            // Manejar errores de la solicitud
+            console.error('Error al editar el gasto:', error.message);
+          });
+        }
+    }
+    
 
 
 
